@@ -1,285 +1,157 @@
-const playlistSongs = document.getElementById("playlist-songs");
-const playButton = document.getElementById("play");
-const pauseButton = document.getElementById("pause");
-const nextButton = document.getElementById("next");
-const previousButton = document.getElementById("previous");
-const shuffleButton = document.getElementById("shuffle");
-
-const allSongs = [
+const scrollLeft = document.querySelector(".scroll-left");
+const scrollRight = document.querySelector(".scroll-right");
+const heroDiv = document.querySelector(".hero-img");
+const sectionContainer = document.querySelector("section");
+const bodyContainer = document.querySelector("body");
+const emblemDiv = document.querySelector(".emblem");
+const albumTitleSpan = document.querySelector(".album-title");
+const texts = document.querySelectorAll(".text");
+const albumNum = document.querySelector(".album-num");
+const spotifyWidget = document.querySelector(".spotify-widget iframe");
+const albums = [
   {
-    id: 0,
-    title: "Scratching The Surface",
-    artist: "Quincy Larson",
-    duration: "4:25",
-    src: "https://cdn.freecodecamp.org/curriculum/js-music-player/scratching-the-surface.mp3",
+    album: "Espresso",
+    emblem: "I can't relate to desperation",
+    "bg-color": ["#0396FF", "#0D1827"],
+    "accent-color": "#0396FF",
+    url: "./espresso.jpg",
+    spotify:
+      "https://open.spotify.com/embed/track/2qSkIjg1o9h3YT9RAgYN75?si=50f4128c321f4f0b",
   },
   {
-    id: 1,
-    title: "Can't Stay Down",
-    artist: "Quincy Larson",
-    duration: "4:15",
-    src: "https://cdn.freecodecamp.org/curriculum/js-music-player/can't-stay-down.mp3",
+    album: "Short n Sweet",
+    emblem: "I know I've been known to share",
+    "bg-color": ["#3df5a7", "#0D1827"],
+    "accent-color": "#3df5a7",
+    url: "./sweet.jpg",
+    spotify:
+      "https://open.spotify.com/embed/track/5G2f63n7IPVPPjfNIGih7Q?si=3c823cc018e848d0",
   },
   {
-    id: 2,
-    title: "Still Learning",
-    artist: "Quincy Larson",
-    duration: "3:51",
-    src: "https://cdn.freecodecamp.org/curriculum/js-music-player/still-learning.mp3",
+    album: "Emails I Can't Send",
+    emblem: "I feel so much lighter like a feather with you off my mind",
+    "bg-color": ["#727272", "#0D1827"],
+    "accent-color": "#727272",
+    url: "./emails.jpg",
+    spotify:
+      "https://open.spotify.com/embed/track/2Zo1PcszsT9WQ0ANntJbID?si=f5e5c21afbb447b4",
   },
   {
-    id: 3,
-    title: "Cruising for a Musing",
-    artist: "Quincy Larson",
-    duration: "3:34",
-    src: "https://cdn.freecodecamp.org/curriculum/js-music-player/cruising-for-a-musing.mp3",
+    album: "Emails I Can't Send",
+    emblem: "Lookin at you got me thinkin nonsense",
+    "bg-color": ["#0396FF", "#0D1827"],
+    "accent-color": "#0396FF",
+    url: "./emails.jpg",
+    spotify:
+      "https://open.spotify.com/embed/track/6dgUya35uo964z7GZXM07g?si=f21acfdea70b40b9",
   },
   {
-    id: 4,
-    title: "Never Not Favored",
-    artist: "Quincy Larson",
-    duration: "3:35",
-    src: "https://cdn.freecodecamp.org/curriculum/js-music-player/never-not-favored.mp3",
+    album: "Short n Sweet",
+    emblem: "Who's the cute boy with the white jacket",
+    "bg-color": ["#3df5a7", "#0D1827"],
+    "accent-color": "#3df5a7",
+    url: "./sweet.jpg",
+    spotify:
+      "https://open.spotify.com/embed/track/1UHS8Rf6h5Ar3CDWRd3wjF?si=c952a442450e4a7a",
   },
   {
-    id: 5,
-    title: "From the Ground Up",
-    artist: "Quincy Larson",
-    duration: "3:12",
-    src: "https://cdn.freecodecamp.org/curriculum/js-music-player/from-the-ground-up.mp3",
+    album: "Short n Sweet",
+    emblem: "Please, please, please don't prove I'm right",
+    "bg-color": ["#727272", "#0D1827"],
+    "accent-color": "#727272",
+    url: "./sweet.jpg",
+    spotify:
+      "https://open.spotify.com/embed/track/2tHwzyyOLoWSFqYNjeVMzj?si=e2650e9a597b4fad",
   },
   {
-    id: 6,
-    title: "Walking on Air",
-    artist: "Quincy Larson",
-    duration: "3:25",
-    src: "https://cdn.freecodecamp.org/curriculum/js-music-player/walking-on-air.mp3",
-  },
-  {
-    id: 7,
-    title: "Can't Stop Me. Can't Even Slow Me Down.",
-    artist: "Quincy Larson",
-    duration: "3:52",
-    src: "https://cdn.freecodecamp.org/curriculum/js-music-player/cant-stop-me-cant-even-slow-me-down.mp3",
-  },
-  {
-    id: 8,
-    title: "The Surest Way Out is Through",
-    artist: "Quincy Larson",
-    duration: "3:10",
-    src: "https://cdn.freecodecamp.org/curriculum/js-music-player/the-surest-way-out-is-through.mp3",
-  },
-  {
-    id: 9,
-    title: "Chasing That Feeling",
-    artist: "Quincy Larson",
-    duration: "2:43",
-    src: "https://cdn.freecodecamp.org/curriculum/js-music-player/chasing-that-feeling.mp3",
+    album: "Emails I Can't Send",
+    emblem: "These are fast times and fast nights",
+    "bg-color": ["#0396FF", "#0D1827"],
+    "accent-color": "#0396FF",
+    url: "./emails.jpg",
+    spotify:
+      "https://open.spotify.com/embed/track/6n05BgVkxxz2k5ICZYa2PH?si=b1bcf6ea83f04789",
   },
 ];
 
-const audio = new Audio();
-let userData = {
-  songs: [...allSongs],
-  currentSong: null,
-  songCurrentTime: 0,
-};
+scrollLeft.addEventListener("click", () => handleClickScroll(-1));
+scrollRight.addEventListener("click", () => handleClickScroll(1));
+heroDiv.addEventListener("animationend", () => {
+  heroDiv.classList.remove("album-transition");
+  document.addEventListener("keydown", handleKeyScroll);
+  scrollLeft.disabled = false;
+  scrollRight.disabled = false;
+  scrollLeft.classList.remove("key-press-hover-left");
+  scrollRight.classList.remove("key-press-hover-right");
 
-const playSong = (id) => {
-  const song = userData?.songs.find((song) => song.id === id);
-  audio.src = song.src;
-  audio.title = song.title;
-
-  if (userData?.currentSong === null || userData?.currentSong.id !== song.id) {
-    audio.currentTime = 0;
-  } else {
-    audio.currentTime = userData?.songCurrentTime;
-  }
-  userData.currentSong = song;
-  playButton.classList.add("playing");
-
-  highlightCurrentSong();
-  setPlayerDisplay();
-  setPlayButtonAccessibleText();
-  audio.play();
-};
-
-const pauseSong = () => {
-  userData.songCurrentTime = audio.currentTime;
-
-  playButton.classList.remove("playing");
-  audio.pause();
-};
-
-const playNextSong = () => {
-  if (userData?.currentSong === null) {
-    playSong(userData?.songs[0].id);
-  } else {
-    const currentSongIndex = getCurrentSongIndex();
-    const nextSong = userData?.songs[currentSongIndex + 1];
-
-    playSong(nextSong.id);
-  }
-};
-
-const playPreviousSong = () => {
-  if (userData?.currentSong === null) return;
-  else {
-    const currentSongIndex = getCurrentSongIndex();
-    const previousSong = userData?.songs[currentSongIndex - 1];
-
-    playSong(previousSong.id);
-  }
-};
-
-const shuffle = () => {
-  userData?.songs.sort(() => Math.random() - 0.5);
-  userData.currentSong = null;
-  userData.songCurrentTime = 0;
-
-  renderSongs(userData?.songs);
-  pauseSong();
-  setPlayerDisplay();
-  setPlayButtonAccessibleText();
-};
-
-const deleteSong = (id) => {
-  if (userData?.currentSong?.id === id) {
-    userData.currentSong = null;
-    userData.songCurrentTime = 0;
-
-    pauseSong();
-    setPlayerDisplay();
-  }
-
-  userData.songs = userData?.songs.filter((song) => song.id !== id);
-  renderSongs(userData?.songs);
-  highlightCurrentSong();
-  setPlayButtonAccessibleText();
-
-  if (userData?.songs.length === 0) {
-    const resetButton = document.createElement("button");
-    const resetText = document.createTextNode("Reset Playlist");
-
-    resetButton.id = "reset";
-    resetButton.ariaLabel = "Reset playlist";
-    resetButton.appendChild(resetText);
-    playlistSongs.appendChild(resetButton);
-
-    resetButton.addEventListener("click", () => {
-      userData.songs = [...allSongs];
-
-      renderSongs(sortSongs());
-      setPlayButtonAccessibleText();
-      resetButton.remove();
-    });
-  }
-};
-
-const setPlayerDisplay = () => {
-  const playingSong = document.getElementById("player-song-title");
-  const songArtist = document.getElementById("player-song-artist");
-  const currentTitle = userData?.currentSong?.title;
-  const currentArtist = userData?.currentSong?.artist;
-
-  playingSong.textContent = currentTitle ? currentTitle : "";
-  songArtist.textContent = currentArtist ? currentArtist : "";
-};
-
-const highlightCurrentSong = () => {
-  const playlistSongElements = document.querySelectorAll(".playlist-song");
-  const songToHighlight = document.getElementById(
-    `song-${userData?.currentSong?.id}`
-  );
-
-  playlistSongElements.forEach((songEl) => {
-    songEl.removeAttribute("aria-current");
-  });
-
-  if (songToHighlight) songToHighlight.setAttribute("aria-current", "true");
-};
-
-const renderSongs = (array) => {
-  const songsHTML = array
-    .map((song) => {
-      return `
-      <li id="song-${song.id}" class="playlist-song">
-      <button class="playlist-song-info" onclick="playSong(${song.id})">
-          <span class="playlist-song-title">${song.title}</span>
-          <span class="playlist-song-artist">${song.artist}</span>
-          <span class="playlist-song-duration">${song.duration}</span>
-      </button>
-      <button onclick="deleteSong(${song.id})" class="playlist-song-delete" aria-label="Delete ${song.title}">
-          <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="8" fill="#4d4d62"/>
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M5.32587 5.18571C5.7107 4.90301 6.28333 4.94814 6.60485 5.28651L8 6.75478L9.39515 5.28651C9.71667 4.94814 10.2893 4.90301 10.6741 5.18571C11.059 5.4684 11.1103 5.97188 10.7888 6.31026L9.1832 7.99999L10.7888 9.68974C11.1103 10.0281 11.059 10.5316 10.6741 10.8143C10.2893 11.097 9.71667 11.0519 9.39515 10.7135L8 9.24521L6.60485 10.7135C6.28333 11.0519 5.7107 11.097 5.32587 10.8143C4.94102 10.5316 4.88969 10.0281 5.21121 9.68974L6.8168 7.99999L5.21122 6.31026C4.8897 5.97188 4.94102 5.4684 5.32587 5.18571Z" fill="white"/></svg>
-        </button>
-      </li>
-      `;
-    })
-    .join("");
-
-  playlistSongs.innerHTML = songsHTML;
-};
-
-const setPlayButtonAccessibleText = () => {
-  const song = userData?.currentSong || userData?.songs[0];
-
-  playButton.setAttribute(
-    "aria-label",
-    song?.title ? `Play ${song.title}` : "Play"
-  );
-};
-
-const getCurrentSongIndex = () =>
-  userData?.songs.indexOf(userData?.currentSong);
-
-playButton.addEventListener("click", () => {
-  if (userData?.currentSong === null) {
-    playSong(userData?.songs[0].id);
-  } else {
-    playSong(userData?.currentSong.id);
-  }
+  for (const text of texts) text.classList.add("show-texts");
 });
 
-pauseButton.addEventListener("click", pauseSong);
-
-nextButton.addEventListener("click", playNextSong);
-
-previousButton.addEventListener("click", playPreviousSong);
-
-shuffleButton.addEventListener("click", shuffle);
-
-audio.addEventListener("ended", () => {
-  const currentSongIndex = getCurrentSongIndex();
-  const nextSongExists = userData?.songs[currentSongIndex + 1] !== undefined;
-
-  if (nextSongExists) {
-    playNextSong();
-  } else {
-    userData.currentSong = null;
-    userData.songCurrentTime = 0;
-    pauseSong();
-    setPlayerDisplay();
-    highlightCurrentSong();
-    setPlayButtonAccessibleText();
+const handleClickScroll = (val) => {
+  if (index + val >= 0 && index + val < albums.length) {
+    updateDisplay((index += val));
   }
-});
-
-const sortSongs = () => {
-  userData?.songs.sort((a, b) => {
-    if (a.title < b.title) {
-      return -1;
-    }
-
-    if (a.title > b.title) {
-      return 1;
-    }
-
-    return 0;
-  });
-
-  return userData?.songs;
 };
 
-renderSongs(sortSongs());
-setPlayButtonAccessibleText();
+const handleKeyScroll = (e) => {
+  if (e.key == "ArrowLeft") {
+    scrollLeft.classList.add("key-press-hover-left");
+    handleClickScroll(-1);
+  }
+  if (e.key == "ArrowRight") {
+    scrollRight.classList.add("key-press-hover-right");
+    handleClickScroll(1);
+  }
+};
+let index = 0;
+
+const updateDisplay = (index) => {
+  let DELIMITER = "";
+
+  const album = albums[index];
+
+  for (const text of texts) text.classList.remove("show-texts");
+  emblemDiv.innerHTML = "";
+  scrollLeft.disabled = true;
+  scrollRight.disabled = true;
+  document.removeEventListener("keydown", handleKeyScroll);
+
+  sectionContainer.id = `hero-${album.album.toLowerCase().replace(" ", "-")}`;
+  bodyContainer.style.background = `linear-gradient(180deg, ${album["bg-color"][0]} 0%, ${album["bg-color"][1]} 100%)`;
+  heroDiv.style.backgroundImage = `url(${album.url})`;
+  albumTitleSpan.textContent = album.album;
+  spotifyWidget.src = album.spotify;
+
+  const number = index + 1;
+  albumNum.innerText = number >= 10 ? number + "." : `0${number}.`;
+  albumNum.style.color = album["accent-color"];
+
+  if (index === 3) scrollRight.classList.add("hide-arrow");
+  else scrollRight.classList.remove("hide-arrow");
+
+  createEmblem(album.emblem, DELIMITER[0] || undefined).forEach((node) =>
+    emblemDiv.append(node)
+  );
+
+  heroDiv.classList.add("album-transition");
+};
+
+const createEmblem = (string, delimiter = "•") => {
+  const spans = [];
+
+  string = string.trim().replaceAll(" ", delimiter) + delimiter;
+  const numChars = string.length;
+  const degVal = 90 / (numChars / 4);
+
+  string.split("").forEach((char, idx) => {
+    const span = document.createElement("span");
+    span.innerText = char;
+    span.style.transform = `rotate(${180 - degVal * idx}deg)`;
+    if (char === delimiter) span.style.color = albums[index]["accent-color"];
+    spans.push(span);
+  });
+
+  return spans;
+};
+
+updateDisplay(index);
